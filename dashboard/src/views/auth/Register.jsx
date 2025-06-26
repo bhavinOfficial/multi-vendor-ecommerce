@@ -3,8 +3,14 @@ import { AiOutlineGithub, AiOutlineGooglePlus } from "react-icons/ai";
 import { FiFacebook } from "react-icons/fi";
 import { CiTwitter } from "react-icons/ci";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { PropagateLoader } from "react-spinners";
+import { overrideStyle } from "../../utils/utils";
+import { seller_register } from "../../store/reducers/authReducer";
 
 const Register = () => {
+  const { loader } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [state, setState] = useState({
     name: "",
     email: "",
@@ -20,6 +26,7 @@ const Register = () => {
 
   const submit = (e) => {
     e.preventDefault();
+    dispatch(seller_register(state))
   };
 
   return (
@@ -83,8 +90,15 @@ const Register = () => {
                 I agree to privacy policy and terms
               </label>
             </div>
-            <button className="bg-blue-500 w-full hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3 cursor-pointer">
-              Sign Up
+            <button
+              disabled={loader ? true : false}
+              className="bg-blue-500 w-full hover:shadow-blue-500/20 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3 cursor-pointer"
+            >
+              {loader ? (
+                <PropagateLoader color="#fff" cssOverride={overrideStyle} />
+              ) : (
+                "Signup"
+              )}
             </button>
             <div className="flex items-center mb-3 gap-3 justify-center">
               <p>

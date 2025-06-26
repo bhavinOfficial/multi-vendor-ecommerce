@@ -1,7 +1,7 @@
 const ProtectRoute = () => {
   return (
     <div>
-        ProtectRoute    
+        ProtectRout  
     </div>
   )
 }

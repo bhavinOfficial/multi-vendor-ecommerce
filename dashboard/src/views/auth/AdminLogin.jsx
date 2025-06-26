@@ -4,6 +4,7 @@ import { admin_login, messageClear } from "../../store/reducers/authReducer";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { overrideStyle } from "../../utils/utils";
 
 const AdminLogin = () => {
   const dispatch = useDispatch();
@@ -27,15 +28,7 @@ const AdminLogin = () => {
     e.preventDefault();
     dispatch(admin_login(state));
   };
-
-  const overrideStyle = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    margin: "0 auto",
-    height: "24px",
-  };
-
+  
   useEffect(() => {
     if (errorMessage) {
       toast.error(errorMessage);

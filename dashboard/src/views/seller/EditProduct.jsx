@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { BsImages } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
 
-const AddProduct = () => {
+const EditProduct = () => {
   const categories = [
     {
       id: 1,
@@ -61,49 +61,44 @@ const AddProduct = () => {
   const [images, setImages] = useState([]);
   const [imagesShow, setImagesShow] = useState([]);
 
-  const imageHandle = (e) => {
-    const files = e.target.files;
-    const length = files.length;
-
-    if (length) {
-      setImages([...images, ...files]);
-      let imageUrls = [];
-      for (let i = 0; i < length; i++) {
-        imageUrls.push({ url: URL.createObjectURL(files[i]) });
-      }
-      setImagesShow([...imagesShow, ...imageUrls]);
-    }
+  const changeImage = (img, files) => {
+    if (files.length) {
+        console.log(img);
+        console.log(files[0]);
+    } 
   };
 
-  const changeImage = (img, index) => {
-    if (img) {
-      let tempUrl = imagesShow;
-      let tempImages = images;
+//   const removeImage = (i) => {
+//     const filterImages = images.filter((image, index) => index !== i);
+//     const filterImagesUrls = imagesShow.filter((image, index) => index !== i);
+//     setImages(filterImages);
+//     setImagesShow(filterImagesUrls);
+// };
 
-      tempImages[index] = img;
-      tempUrl[index] = {
-        url: URL.createObjectURL(img),
-      };
-      setImagesShow([...tempUrl]);
-      setImages([...tempImages]);
-    }
-  };
-
-  const removeImage = (i) => {
-    const filterImages = images.filter((image, index) => index !== i);
-    const filterImagesUrls = imagesShow.filter((image, index) => index !== i);
-    setImages(filterImages);
-    setImagesShow(filterImagesUrls);
-  };
-
-  console.log("images: ", images);
-  console.log("imagesShow: ", imagesShow);
+  useEffect(() => {
+      setState({
+      name: "Men's Premium soft...",
+      description: "Men's Premium soft...",
+      discount: 10,
+      price: 455,
+      brand: "Easy",
+      stock: 10,
+    });
+    setCategory("Sports");
+    setImagesShow([
+        '/images/bird_2.png',
+        '/images/bird_2.png',
+        '/images/bird_2.png'
+    ]);
+  }, []);
 
   return (
     <div className="px-2 md:px-7 py-5">
       <div className="w-full bg-[#283046] p-4 rounded-md pb-10">
         <div className="flex justify-between items-center pb-4">
-          <h1 className="text-[#d0d2d6] text-xl font-semibold ">Add Product</h1>
+          <h1 className="text-[#d0d2d6] text-xl font-semibold ">
+            Edit Product
+          </h1>
           <Link
             to="/seller/dashboard/products"
             className="bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-sm px-7 py-2 my-2"
@@ -244,50 +239,19 @@ const AddProduct = () => {
               ></textarea>
             </div>
             <div className="grid lg:grid-cols-4 grid-cols-1 md:grid-cols-3 sm:grid-cols-2 sm:gap-4 md:gap-4 xs-gap-4 gap-3 w-full text-[#d0d2d6] mb-4">
-              {imagesShow.map((image, i) => (
-                <div className="h-[180px] relative" key={i}>
-                  <label htmlFor={i}>
-                    <img
-                      className="w-full h-full rounded-sm cursor-pointer"
-                      src={image.url}
-                      alt="image"
-                    />
-                  </label>
-                  <input
-                    onChange={(e) => changeImage(e.target.files[0], i)}
-                    type="file"
-                    id={i}
-                    className="hidden"
-                  />
-                  <span
-                    onClick={() => removeImage(i)}
-                    className="p-2 z-10 cursor-pointer bg-slate-700 hover:shadow-lg hover:shadow-slate-500/50 text-white absolute top-1 right-1 rounded-full"
-                  >
-                    <IoCloseSharp />
-                  </span>
-                </div>
-              ))}
-              <label
-                htmlFor="image"
-                className="flex justify-center items-center flex-col h-[180px] cursor-pointer border border-dashed hover:border-indigo-500 w-full border-[#d0d2d6]"
-              >
-                <span>
-                  <BsImages />
-                </span>
-                <span>select images</span>
-              </label>
-              <input
-                multiple
-                onChange={imageHandle}
-                type="file"
-                className="hidden"
-                id="image"
-              />
+                    {
+                        imagesShow.map((img, i) => <div>
+                            <label htmlFor={i}>
+                                <img src={img} alt="" />
+                            </label>
+                            <input onChange={(e) => changeImage(img, e.target.files)} type="file" id={i} className="hidden" />
+                        </div>)
+                    }
             </div>
             <div className="flex">
-            <button className="bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 my-2">
-              Add Product
-            </button>
+              <button className="bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 my-2">
+                Update Product
+              </button>
             </div>
           </form>
         </div>
@@ -296,4 +260,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;
