@@ -14,7 +14,7 @@ class authControllers {
         const match = await bcrypt.compare(password, admin.password);
         if (match) {
           const token = await createToken({
-            id: admin._id,
+            id: admin.id,
             role: admin.role,
           });
           res.cookie("accessToken", token, {
@@ -40,7 +40,10 @@ class authControllers {
     const { name, email, password } = req.body;
     try {
       const getUser = await sellerModel.findOne({ email });
-      console.log("🚀 ~ authControllers ~ seller_register= ~ getUser:", getUser)
+      console.log(
+        "🚀 ~ authControllers ~ seller_register= ~ getUser:",
+        getUser
+      );
       if (getUser) {
         responseReturn(res, 409, { error: "Email already exists!" });
       } else {
@@ -50,43 +53,72 @@ class authControllers {
           password: await bcrypt.hash(password, 9),
           loginMethod: "manually",
         });
-        await  sellerCustomerModel.create({
-          myId: seller.id
-        });     
+        await sellerCustomerModel.create({
+          myId: seller.id,
+        });
         const token = await createToken({
           id: seller.id,
-          role: seller.role
+          role: seller.role,
         });
-        res.cookie('accessToken', token, {
-          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        res.cookie("accessToken", token, {
+          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         });
-        responseReturn(res, 201, { 
+        responseReturn(res, 201, {
           message: "Seller registered successfully.",
-          token
-         });
+          token,
+        });
       }
-      
     } catch (error) {
       console.error("Error while seller register: ", error);
       responseReturn(res, 500, { error: "Internal server error!" });
     }
   };
-  
+
   getUser = async (req, res) => {
     const { id, role } = req;
     try {
-      if (role === 'admin') {
-        const user = await adminModel.findById(id);
-        responseReturn(res, 200, { userInfo: user });
+      if (role === "admin") {
+        const admin = await adminModel.findById(id);
+        responseReturn(res, 200, { userInfo: admin });
       } else {
-        console.log("seller info");
+        const seller = await sellerModel.findById(id);
+        responseReturn(res, 200, { userInfo: seller });
       }
     } catch (error) {
       console.error("Error while getting user info: ", error);
       responseReturn(res, 500, { error: "Internal server error!" });
-    }  
+    }
   };
 
+  seller_login = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+      const seller = await sellerModel.findOne({ email }).select("+password");
+      if (seller) {
+        const match = await bcrypt.compare(password, seller.password);
+        if (match) {
+          const token = await createToken({
+            id: seller.id,
+            role: seller.role,
+          });
+          res.cookie("accessToken", token, {
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+          });
+          responseReturn(res, 200, {
+            token,
+            message: "Login success",
+          });
+        } else {
+          responseReturn(res, 400, { error: "Entered wrong password!" });
+        }
+      } else {
+        responseReturn(res, 404, { error: "Email not found!" });
+      }
+    } catch (error) {
+      console.error("Error while admin login: ", error);
+      responseReturn(res, 500, { error: "Internal server error!" });
+    }
+  };
 }
 
 module.exports = new authControllers();

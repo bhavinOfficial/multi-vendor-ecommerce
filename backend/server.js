@@ -4,7 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { dbConnect } = require("./utils/db");
 const app = express();
-const port = process.env.PORT;
+const port = process.env.APP_PORT;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -16,6 +16,7 @@ app.use(
 );
 
 app.use("/api", require("./routes/authRoutes"));
+app.use("/api", require("./routes/dashboard/categoryRoutes"));
 app.get("/", (req, res) => res.send("Hello world!"));
 dbConnect();
 app.listen(port, () => console.log(`Server is running on port ${port}!`));

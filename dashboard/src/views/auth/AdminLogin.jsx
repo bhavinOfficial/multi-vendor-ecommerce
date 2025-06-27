@@ -30,16 +30,16 @@ const AdminLogin = () => {
   };
   
   useEffect(() => {
-    if (errorMessage) {
-      toast.error(errorMessage);
-      dispatch(messageClear());
-    }
     if (successMessage) {
       toast.success(successMessage);
       dispatch(messageClear());
       navigate("/");
     }
-  }, [errorMessage, successMessage, dispatch, navigate]);
+    if (errorMessage) {
+      toast.error(errorMessage);
+      dispatch(messageClear());
+    }
+  }, [successMessage, errorMessage, dispatch, navigate]);
 
   return (
     <div className="min-w-screen min-h-screen bg-[#161d31] flex items-center justify-center">

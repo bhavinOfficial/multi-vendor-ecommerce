@@ -7,10 +7,7 @@ const Pagination = ({
   perPage,
   showItem,
 }) => {
-    console.log("🚀 ~ totalItem:", totalItem)
-  console.log("🚀 ~ perPage:", perPage)
   let totalPage = Math.ceil(totalItem / perPage);
-  console.log("🚀 ~ totalPage:", totalPage)
 
   let startPage = pageNumber;
 

@@ -1,6 +1,5 @@
 import { lazy } from "react";
 
-const Home = lazy(() => import("../../views/Home"));
 const SellerDashboard = lazy(() => import("../../views/seller/SellerDashboard"));
 const AddProduct = lazy(() => import("../../views/seller/AddProduct"));
 const EditProduct = lazy(() => import("../../views/seller/EditProduct"));
@@ -12,13 +11,19 @@ const Payments = lazy(() => import("../../views/seller/Payments"));
 const SellerToCustomerChat = lazy(() => import("../../views/seller/SellerToCustomerChat"));
 const SellerToAdminChat = lazy(() => import("../../views/seller/SellerToAdminChat"));
 const Profile = lazy(() => import("../../views/seller/Profile"));
-
+const AccountPending = lazy(() => import("../../views/AccountPending"));
+const AccountDeactive = lazy(() => import("../../views/AccountDeactive"));
 
 export const sellerRoutes = [
     {
-        path: '/',
-        element: <Home />,
-        ability: ['admin', 'seller'] 
+        path: '/seller/account-pending',
+        element: <AccountPending />,
+        ability: 'seller'
+    },
+    {
+        path: '/seller/account-deactive',
+        element: <AccountDeactive />,
+        ability: 'seller'
     },
     {
         path: '/seller/dashboard',
@@ -54,13 +59,13 @@ export const sellerRoutes = [
         path: '/seller/dashboard/orders',
         element: <Orders />,
         role: 'seller',
-        ability: ['active', 'deactive'] 
+        visibility: ['active', 'deactive'] 
     },
     {
         path: '/seller/dashboard/order/details/:orderId',
         element: <OrderDetails />,
         role: 'seller',
-        ability: ['active', 'deactive'] 
+        visibility: ['active', 'deactive'] 
     },
     {
         path: '/seller/dashboard/payments',
@@ -71,7 +76,8 @@ export const sellerRoutes = [
     {
         path: '/seller/dashboard/chat-support',
         element: <SellerToAdminChat />,
-        ability: ['active', 'deactive', 'pending'] 
+        role: 'seller',
+        visibility: ['active', 'deactive', 'pending'] 
     },
     {
         path: '/seller/dashboard/chat-customer/:customerId',

@@ -1,8 +1,9 @@
-const Search = ({ setPerPage, searchValue, setSearchValue }) => {
+const Search = ({ setPerPage, perPage, searchValue, setSearchValue }) => {
   return (
     <div className="flex justify-between items-center">
       <select
         onChange={(e) => setPerPage(parseInt(e.target.value))}
+        value={perPage}
         className="px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]"
       >
         <option value="5">5</option>
