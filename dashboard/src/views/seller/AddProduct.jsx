@@ -2,30 +2,24 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BsImages } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import { get_category } from "../../store/reducers/categoryReducer";
+import { add_product } from "../../store/reducers/productReducer";
+
 
 const AddProduct = () => {
-  const categories = [
-    {
-      id: 1,
-      name: "Sports",
-    },
-    {
-      id: 2,
-      name: "Mobile",
-    },
-    {
-      id: 3,
-      name: "Jersey",
-    },
-    {
-      id: 4,
-      name: "Pant",
-    },
-    {
-      id: 5,
-      name: "Watch",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { categories } = useSelector((state) => state.category);
+  console.log("🚀 ~ AddProduct ~ categories:", categories)
+
+  useEffect(() => {
+    dispatch(get_category({
+      searchValue: "",
+      perPage: 0,
+      page: 0
+    }));
+  }, []);
+  
   const [state, setState] = useState({
     name: "",
     description: "",
@@ -36,7 +30,8 @@ const AddProduct = () => {
   });
   const [cateShow, setCateShow] = useState(false);
   const [category, setCategory] = useState("");
-  const [allCategories, setAllCategories] = useState(categories);
+  const [allCategories, setAllCategories] = useState([]);
+  console.log("🚀 ~ AddProduct ~ allCategories:", allCategories)
   const [searchValue, setSearchValue] = useState("");
 
   const inputHandle = (e) => {
@@ -45,6 +40,10 @@ const AddProduct = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  useEffect(() => {
+    setAllCategories(categories);
+  }, [categories]);
 
   const categorySearch = (e) => {
     const value = e.target.value;
@@ -96,8 +95,22 @@ const AddProduct = () => {
     setImagesShow(filterImagesUrls);
   };
 
-  console.log("images: ", images);
-  console.log("imagesShow: ", imagesShow);
+  const add = (e) => {
+    e.preventDefault();
+    console.log("state: ", state);
+    console.log("category: ", category);
+    console.log("images: ", images);
+    const formData = new FormData();
+    formData.append("name", state.name);
+    formData.append("description", state.description);
+    formData.append("price", state.price);
+    formData.append("stock", state.stock);
+    formData.append("discount", state.discount);
+    formData.append("brand", state.brand);
+    formData.append("category", category);
+    formData.append("images", images);
+    dispatch(add_product(formData))
+  }
 
   return (
     <div className="px-2 md:px-7 py-5">
@@ -112,7 +125,7 @@ const AddProduct = () => {
           </Link>
         </div>
         <div>
-          <form>
+          <form onSubmit={add}>
             <div className="flex flex-col md:flex-row gap-4 w-full text-[#d0d2d6] mb-3">
               <div className="flex flex-col w-full gap-1">
                 <label htmlFor="name">Product name</label>
@@ -285,7 +298,7 @@ const AddProduct = () => {
               />
             </div>
             <div className="flex">
-            <button className="bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 my-2">
+            <button className="bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 my-2 cursor-pointer">
               Add Product
             </button>
             </div>

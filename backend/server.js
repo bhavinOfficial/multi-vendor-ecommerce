@@ -15,8 +15,12 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => res.send("Hello world!"));
 app.use("/api", require("./routes/authRoutes"));
 app.use("/api", require("./routes/dashboard/categoryRoutes"));
-app.get("/", (req, res) => res.send("Hello world!"));
+app.use("/api", require("./routes/dashboard/productRoutes"));
+
+
+
 dbConnect();
 app.listen(port, () => console.log(`Server is running on port ${port}!`));

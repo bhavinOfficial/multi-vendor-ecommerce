@@ -14,7 +14,7 @@ const Search = ({ setPerPage, perPage, searchValue, setSearchValue }) => {
         className="px-4 py-2 focus:border-indigo-500 outline-none bg-[#283046] border border-slate-700 rounded-md text-[#d0d2d6]"
         type="text"
         placeholder="Search"
-        onChage={(e) => setSearchValue(e.target.value)}
+        onChange={(e) => setSearchValue(e.target.value)}
         value={searchValue}
       />
     </div>

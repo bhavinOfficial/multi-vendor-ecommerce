@@ -7,7 +7,7 @@ import { BsImage } from "react-icons/bs";
 import { PropagateLoader } from "react-spinners";
 import { overrideStyle } from "../../utils/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { categoryAdd, messageClear } from "../../store/reducers/categoryReducer";
+import { categoryAdd, get_category, messageClear } from "../../store/reducers/categoryReducer";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import Search from "../components/Search";
@@ -16,7 +16,7 @@ import Search from "../components/Search";
 const Category = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const { loader, successMessage, errorMessage } = useSelector((state) => state.auth);
+  const { loader, successMessage, errorMessage, categories } = useSelector((state) => state.category);
   const [searchValue, setSearchValue] = useState("");
   const [perPage, setPerPage] = useState(5);
   const [show, setShow] = useState(false);
@@ -61,8 +61,15 @@ const Category = () => {
     }
   }, [successMessage, errorMessage, dispatch]);
 
-  console.log("🚀 ~ Category ~ perPage:", perPage)
-  console.log("🚀 ~ Category ~ searchValue:", searchValue)
+  useEffect(() => {
+    const obj = {
+      perPage: parseInt(perPage),
+      page: parseInt(currentPage),
+      searchValue
+    }
+    dispatch(get_category(obj));
+  }, [searchValue, currentPage, perPage, dispatch]);
+
   
   return (
     <div className="px-2 lg:px-7 pt-5">
@@ -100,13 +107,13 @@ const Category = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[1, 2, 3, 4, 5].map((item, index) => (
+                  {categories.map((category, index) => (
                     <tr key={index}>
                       <td
                         scope="row"
                         className="py-1 px-4 font-medium whitespace-nowrap"
                       >
-                        {item}
+                        {index + 1}
                       </td>
                       <td
                         scope="row"
@@ -114,7 +121,7 @@ const Category = () => {
                       >
                         <img
                           className="w-[45px] h-[45px]"
-                          src={"/images/bird_2.png"}
+                          src={category?.image}
                           alt="category"
                         />
                       </td>
@@ -122,7 +129,7 @@ const Category = () => {
                         scope="row"
                         className="py-1 px-4 font-medium whitespace-nowrap"
                       >
-                        <span>Sports</span>
+                        <span>{category?.name}</span>
                       </td>
                       <td
                         scope="row"
