@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["*", "http://localhost:5173"],
     credentials: true,
   })
 );
@@ -19,8 +19,6 @@ app.get("/", (req, res) => res.send("Hello world!"));
 app.use("/api", require("./routes/authRoutes"));
 app.use("/api", require("./routes/dashboard/categoryRoutes"));
 app.use("/api", require("./routes/dashboard/productRoutes"));
-
-
 
 dbConnect();
 app.listen(port, () => console.log(`Server is running on port ${port}!`));

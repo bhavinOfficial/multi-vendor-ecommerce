@@ -10,11 +10,8 @@ class categoryController {
       if (err) {
         responseReturn(res, 400, { error: "Something error occured!" });
       }
-      console.log("🚀 ~ categoryController ~ form.parse ~ files:", files);
-      console.log("🚀 ~ categoryController ~ form.parse ~ fields:", fields);
       let { image } = files;
       let { name } = fields;
-      console.log("🚀 ~ categoryController ~ form.parse ~ name:", name)
 
       name = name?.[0]?.trim();
 
@@ -31,7 +28,6 @@ class categoryController {
         const result = await cloudinary.uploader.upload(image?.[0]?.filepath, {
           folder: "categories",
         });
-        console.log("🚀 ~ categoryController ~ form.parse ~ result:", result)
 
         if (result) {
           const category = await categoryModel.create({
@@ -57,10 +53,10 @@ class categoryController {
   get_categories = async (req, res) => {
     const { page, searchValue, perPage } = req.query;
     try {
-        let skipPage;
-        if (page && perPage) {
-            skipPage = parseInt(perPage) * (parseInt(page) - 1);
-        }
+      let skipPage;
+      if (page && perPage) {
+        skipPage = parseInt(perPage) * (parseInt(page) - 1);
+      }
       let categories, totalCategories;
       if (searchValue && page && perPage) {
         categories = await categoryModel
@@ -80,16 +76,14 @@ class categoryController {
           })
           .countDocuments();
       } else if (searchValue === "" && page && perPage) {
-          categories = await categoryModel
-            .find({})
-            .skip(skipPage)
-            .limit(parseInt(perPage))
-            .sort({ createdAt: -1 });
-          totalCategories = await categoryModel.find({}).countDocuments();
-      } else {
         categories = await categoryModel
           .find({})
+          .skip(skipPage)
+          .limit(parseInt(perPage))
           .sort({ createdAt: -1 });
+        totalCategories = await categoryModel.find({}).countDocuments();
+      } else {
+        categories = await categoryModel.find({}).sort({ createdAt: -1 });
         totalCategories = await categoryModel.find({}).countDocuments();
       }
       responseReturn(res, 200, { totalCategories, categories });

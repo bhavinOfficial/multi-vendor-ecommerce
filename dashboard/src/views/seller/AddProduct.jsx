@@ -2,24 +2,30 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BsImages } from "react-icons/bs";
 import { IoCloseSharp } from "react-icons/io5";
+import { PropagateLoader } from "react-spinners";
 import { useDispatch, useSelector } from "react-redux";
 import { get_category } from "../../store/reducers/categoryReducer";
-import { add_product } from "../../store/reducers/productReducer";
-
+import { add_product, messageClear } from "../../store/reducers/productReducer";
+import { overrideStyle } from "../../utils/utils";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
-  console.log("🚀 ~ AddProduct ~ categories:", categories)
+  const { successMessage, errorMessage, loader } = useSelector(
+    (state) => state.product
+  );
 
   useEffect(() => {
-    dispatch(get_category({
-      searchValue: "",
-      perPage: 0,
-      page: 0
-    }));
+    dispatch(
+      get_category({
+        searchValue: "",
+        perPage: 0,
+        page: 0,
+      })
+    );
   }, []);
-  
+
   const [state, setState] = useState({
     name: "",
     description: "",
@@ -31,7 +37,6 @@ const AddProduct = () => {
   const [cateShow, setCateShow] = useState(false);
   const [category, setCategory] = useState("");
   const [allCategories, setAllCategories] = useState([]);
-  console.log("🚀 ~ AddProduct ~ allCategories:", allCategories)
   const [searchValue, setSearchValue] = useState("");
 
   const inputHandle = (e) => {
@@ -97,9 +102,6 @@ const AddProduct = () => {
 
   const add = (e) => {
     e.preventDefault();
-    console.log("state: ", state);
-    console.log("category: ", category);
-    console.log("images: ", images);
     const formData = new FormData();
     formData.append("name", state.name);
     formData.append("description", state.description);
@@ -108,9 +110,36 @@ const AddProduct = () => {
     formData.append("discount", state.discount);
     formData.append("brand", state.brand);
     formData.append("category", category);
-    formData.append("images", images);
-    dispatch(add_product(formData))
-  }
+    formData.append("shopName", "Farid Fashion");
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images", images[i]);
+    }
+    console.log("state: ", state);
+    dispatch(add_product(formData));
+  };
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch(messageClear());
+      setState({
+        name: "",
+        description: "",
+        discount: "",
+        price: "",
+        brand: "",
+        stock: "",
+      });
+      setCategory("");
+      setImages([]);
+      setImagesShow([]);
+    }
+
+    if (errorMessage) {
+      toast.error(errorMessage);
+      dispatch(messageClear());
+    }
+  }, [successMessage, errorMessage, dispatch]);
 
   return (
     <div className="px-2 md:px-7 py-5">
@@ -218,7 +247,7 @@ const AddProduct = () => {
             </div>
             <div className="flex flex-col md:flex-row gap-4 w-full text-[#d0d2d6] mb-3">
               <div className="flex flex-col w-full gap-1">
-                <label htmlFor="name">Price</label>
+                <label htmlFor="name">Price (in $)</label>
                 <input
                   type="number"
                   id="price"
@@ -298,9 +327,16 @@ const AddProduct = () => {
               />
             </div>
             <div className="flex">
-            <button className="bg-blue-500 hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 my-2 cursor-pointer">
-              Add Product
-            </button>
+              <button
+                disabled={loader ? true : false}
+                className="bg-blue-500 w-[190px] hover:shadow-blue-500/50 hover:shadow-lg text-white rounded-md px-7 py-2 mb-3 cursor-pointer"
+              >
+                {loader ? (
+                  <PropagateLoader color="#fff" cssOverride={overrideStyle} />
+                ) : (
+                  "Add Product"
+                )}
+              </button>
             </div>
           </form>
         </div>
