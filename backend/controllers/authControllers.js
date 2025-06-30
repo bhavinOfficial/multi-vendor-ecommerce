@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 const { createToken } = require("../utils/tokenCreate");
 const sellerModel = require("../models/sellerModel");
 const sellerCustomerModel = require("../models/chat/sellerCustomerModel");
+const formidable = require("formidable");
+const productModel = require("../models/productModel");
+const cloudinary = require("cloudinary").v2;
 
 class authControllers {
   admin_login = async (req, res) => {
@@ -118,6 +121,47 @@ class authControllers {
       console.error("Error while admin login: ", error);
       responseReturn(res, 500, { error: "Internal server error!" });
     }
+  };
+
+  profile_image_upload = async (req, res) => {
+    const form = new formidable.IncomingForm({ multiples: true });
+    form.parse(req, async (err, _, files) => {
+      if (err) {
+        responseReturn(res, 400, { error: "Something error occured!" });
+      }
+
+      let { image } = files;
+
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+        secure: true,
+      });
+
+      try {
+        const result = await cloudinary.uploader.upload(image?.[0]?.filepath, {
+          folder: "profile",
+        });
+        if (result) { 
+          await sellerModel.findByIdAndUpdate(req?.id, {
+            image: result?.url,
+          });
+          const userInfo = await sellerModel.findById(req?.id);
+          responseReturn(res, 201, {
+            message: "Profile image uploaded suucessfully.",
+            userInfo
+          });
+        } else {
+          responseReturn(res, 400, {
+            message: "Image upload failed!",
+          });
+        }
+      } catch (error) {
+        console.error("Error occured while profile image upload: ", error);
+        responseReturn(res, 500, { error: "Internal server error!" });
+      }
+    });
   };
 }
 

@@ -65,6 +65,21 @@ export const seller_register = createAsyncThunk(
   }
 );
 
+export const profile_image_upload = createAsyncThunk(
+  "auth/profile_image_upload",
+  async (formData, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const { data } = await api.post("/profile-image-upload", formData, {
+        withCredentials: true,
+      });
+      return fulfillWithValue(data);
+    } catch (error) {
+      console.error("Error during seller profile image upload: ", error.response.data);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const returnRole = (token) => {
   if (token) {
     const decodedToken = jwtDecode(token);
@@ -150,6 +165,19 @@ export const authReducer = createSlice({
         state.userInfo = action.payload.userInfo;
       })
       .addCase(get_user_info.rejected, (state, action) => {
+        state.loader = false;
+        state.errorMessage = action.payload.error;
+      })
+      .addCase(profile_image_upload.pending, (state) => {
+        state.loader = true;
+      })
+      .addCase(profile_image_upload.fulfilled, (state, action) => {
+        state.loader = false;
+        state.errorMessage = "";
+        state.successMessage = action.payload.message;
+        state.userInfo = action.payload.userInfo;
+      })
+      .addCase(profile_image_upload.rejected, (state, action) => {
         state.loader = false;
         state.errorMessage = action.payload.error;
       });

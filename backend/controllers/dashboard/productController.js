@@ -9,8 +9,6 @@ class productController {
       if (err) {
         responseReturn(res, 400, { error: "Something error occured!" });
       }
-      console.log("🚀 ~ productController ~ form.parse ~ files:", files);
-      console.log("🚀 ~ productController ~ form.parse ~ fields:", fields);
       let {
         name,
         description,
